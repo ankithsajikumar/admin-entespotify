@@ -3,8 +3,7 @@ import { apiSlice } from "./apiSlice"
 export const trackApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getTracks: builder.query({
-            query: () => '/tracks',
-            keepUnusedDataFor: 1
+            query: () => '/tracks'
         }),
         addTrack: builder.mutation({
             query: track => ({
@@ -12,8 +11,21 @@ export const trackApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: { ...track }
             })
+        }),
+        editTrack: builder.mutation({
+            query: ({id, ...track}) => ({
+                url: `/tracks/${id}`,
+                method: 'PUT',
+                body: track
+            })
+        }),
+        deleteTrack: builder.mutation({
+            query: (id) => ({
+                url: `/tracks/${id}`,
+                method: 'DELETE'
+            })
         })
     })
 })
 
-export const { useGetTracksQuery, useAddTrackMutation } = trackApiSlice 
+export const { useGetTracksQuery, useAddTrackMutation, useEditTrackMutation, useDeleteTrackMutation } = trackApiSlice 
