@@ -1,19 +1,36 @@
 import { GridColDef } from "@mui/x-data-grid"
-import { useGetAccountsQuery } from "../api/accountApiSlice"
-import DataTable from "./Table"
+import { useGetAccountsQuery, useAddAccountMutation, useEditAccountMutation, useDeleteAccountMutation } from "../api/accountApiSlice"
+import EditableTable from "./EditableTable"
+import EditableForm from "./Form"
+import { TabList, TabPanel } from "./TabList"
 
 function AccountList() {
-    const {data: accounts}  = useGetAccountsQuery("")
+    const fetchAccounts  = useGetAccountsQuery("")
+    const [addAccount] = useAddAccountMutation()
+    const [editAccount] = useEditAccountMutation()
+    const [deleteAccount] = useDeleteAccountMutation()
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID' },
-        { field: 'title', headerName: 'Title' },
-        { field: 'artist', headerName: 'Artist' },
-        { field: 'album', headerName: 'Album' }
+        { field: 'id', headerName: 'ID', width: 180 },
+        { field: 'title', headerName: 'Title', width: 220, editable: true },
+        { field: 'artist', headerName: 'Artist', width: 220 },
+        { field: 'album', headerName: 'Album', width: 220, editable: true }
+    ]
+
+    const fields: any[] = [
+        { fieldName: 'title', fieldLabel: 'Title' },
+        { fieldName: 'album', fieldLabel: 'Album' }
     ]
 
     return (
-        <DataTable rows={accounts} columns={columns} />
+        <TabList>
+            <TabPanel index={0} label="List">
+                <EditableTable columns={columns} editMutation={editAccount} deleteMutation={deleteAccount} fetchQuery={fetchAccounts} />
+            </TabPanel>
+            <TabPanel index={1} label="Add Track">
+                <EditableForm fields={fields} buttonText='Submit' addMutation={addAccount} />
+            </TabPanel>
+        </TabList>
     )
 }
 export default AccountList
